@@ -8,7 +8,7 @@ app = Flask(__name__)
 mnt_dir = os.environ.get("MNT_DIR", "/mnt/nfs/filestore")
 filename = os.environ.get("FILENAME", "test")
 
-@app("/")
+@app.route("/")
 def home():
     return os.listdir(mnt_dir)
 
