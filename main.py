@@ -39,73 +39,8 @@ def index(path):
     if not path.startswith(mnt_dir):
         return redirect(mnt_dir)
 
-    # Add parent mount path link
-    html = "<html><body>\n"
-    if path != mnt_dir:
-        html += f'<a href="{mnt_dir}">{mnt_dir}</a><br/><br/>\n'
-    else:
-        # Write a new test file
-        try:
-            write_file(mnt_dir, filename)
-        except Exception:
-            abort(500, description="Error writing file.")
+    return os.listdir(path)
 
-    # Return all files if path is a directory, else return the file
-    if isdir(path):
-        for file in os.listdir(path):
-            full_path = join(path, file)
-            if isfile(full_path):
-                html += f'<a href="{full_path}">{file}</a><br/>\n'
-    else:
-        try:
-            html += read_file(path)
-        except Exception:
-            abort(404, description="Error retrieving file.")
-
-    html += "</body></html>\n"
-    return html
-
-
-def write_file(mnt_dir, filename):
-    """Write files to a directory with date created.
-
-    Args:
-        mnt_dir: the file system mount directory
-        filename: the file name
-    """
-    date = datetime.datetime.utcnow()
-    file_date = "{dt:%a}-{dt:%b}-{dt:%d}-{dt:%H}:{dt:%M}-{dt:%Y}".format(dt=date)
-    with open(f"{mnt_dir}/{filename}-{file_date}.txt", "a") as f:
-        f.write(f"This test file was created on {date}.")
-
-
-def read_file(full_path):
-    """Read files and return contents.
-
-    Args:
-        full_path: the path to the file
-
-    Returns:
-        The file contents.
-    """
-    with open(full_path) as reader:
-        return reader.read()
-
-
-def shutdown_handler(signal, frame):
-    """SIGTERM handler.
-    Learn more at https://docs.python.org/3/library/signal.html
-
-    Args:
-        signal: the signal number
-        frame: The current stack frame
-    """
-    print("Caught SIGTERM signal.", flush=True)
-    return
-
-
-# Register SIGTERM handler
-signal.signal(signal.SIGTERM, shutdown_handler)
 
 # To locally run the app
 if __name__ == "__main__":
