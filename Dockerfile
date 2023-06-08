@@ -3,10 +3,7 @@
 FROM python:3.11-buster
 
 # Install system dependencies
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
-    --mount=target=/var/cache/apt,type=cache,sharing=locked \
-    set -e; \
+RUN set -e; \
     apt-get update -y && apt-get install -y \
     tini \
     lsb-release; \
